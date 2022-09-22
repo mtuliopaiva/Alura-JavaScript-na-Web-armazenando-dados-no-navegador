@@ -11,7 +11,7 @@ itens.forEach ((elemento) => {
     // console.log(elemento.nome, elemento.quantidade);
 
     // Na iteração, chamada a função cria elemento com o parametro elemento passado que são
-    // os objetos parseados do array
+    // os objetos parseados do array e atualiza meu localStorage
     criaElemento(elemento);
 })
 
@@ -21,12 +21,9 @@ form.addEventListener('submit', (evento) => {
     const nome = evento.target.elements['nome'];
     const quantidade = evento.target.elements['quantidade'];
 
- 
-    // console.log(evento);
-    // console.log(evento.target);
-    // console.log(evento.target.elements);
-    // console.log(evento.target.elements['nome'].value);
-    // console.log(evento.target.elements['quantidade'].value);
+    // Verificando se existe o item no array
+    const existe = itens.find(elemento => elemento.nome === nome.value);
+    console.log(existe);
 
     // Criando um objeto
     const itemAtual = {
@@ -34,9 +31,40 @@ form.addEventListener('submit', (evento) => {
         "quantidade" : quantidade.value
     }
 
-    criaElemento(itemAtual);
-    // Inserindo um objeto no array (Sequencia de objetos)
-    itens.push(itemAtual);
+    // Criando uma condicional que verifica o id
+    if(existe){
+        itemAtual.id = existe.id;
+        console.log(existe.id);
+        
+        atualizaElemento(itemAtual);
+
+        // Para sobrescrever o conteudo no localStorage - basta pegar o itens na posicao existe id e
+        // igualar ao itemAtual
+        itens[existe.id] = itemAtual;
+        
+    }
+    else{
+        // Caso o item nao exista, a id do item vale o tamanho
+        // assim sendo incrementa sempre
+        itemAtual.id=itens.length;
+
+        // Atualiza minha lista
+        criaElemento(itemAtual);
+
+        // Inserindo um objeto no array (Sequencia de objetos)
+        itens.push(itemAtual);
+    }
+
+ 
+    // console.log(evento);
+    // console.log(evento.target);
+    // console.log(evento.target.elements);
+    // console.log(evento.target.elements['nome'].value);
+    // console.log(evento.target.elements['quantidade'].value);
+
+
+
+ 
 
     // Setando no localStorage o array e transformando mem string o array de objetos
     localStorage.setItem("itens",JSON.stringify(itens));
@@ -54,6 +82,8 @@ function criaElemento(item){
 
     const numeroItem = document.createElement('strong');/*criando tag*/
     numeroItem.innerHTML = item.quantidade;
+    // Colocando um data atributtes atraves do JS
+    numeroItem.dataset.id = item.id;
 
     /*novoItem.innerHTML = numeroItem + nome; 
     Não da certo dessa forma, ao criar um elemento do 
@@ -65,6 +95,9 @@ function criaElemento(item){
    novoItem.appendChild(numeroItem);
    novoItem.innerHTML += item.nome; 
    lista.appendChild(novoItem);
+}
+function atualizaElemento(item){
+    document.querySelector("[data-id = '"+item.id+"']").innerHTML = item.quantidade;
 }
 /*
 Criando um array
@@ -127,6 +160,43 @@ Primeiro sera verificado se existe  algo no localStorage e se for false
 criara um array vazio
 Precisamos parsear o array, dividindo em objetos JSON.parse()
 const itens = JSON.parse(localStorage.getItem("itens")) || [];
+*/
+
+/*
+Atualizando os itens
+
+Colocando um data atributtes atraves do JS na tag strong
+numeroItem.dataset.id = item.id;
+
+ - Criando uma condicional que verifica se o id existe, caso for verdadeiroo itemAtual id recebe
+ existe.id e atualiza o elemento e atualiza o localstorage
+- Caso contrario o item atual recebe o length dele que faz com que incremente sempre 1, cria
+o elemento novo e insere no array
+    if(existe){
+        itemAtual.id = existe.id;
+        console.log(existe.id);
+        
+        atualizaElemento(itemAtual);
+        
+    }
+    else{
+        Caso o item nao exista, a id do item vale o tamanho
+        assim sendo incrementa sempre
+        itemAtual.id=itens.length;
+
+        Atualiza minha lista
+        criaElemento(itemAtual);
+
+        Inserindo um objeto no array (Sequencia de objetos)
+        itens.push(itemAtual);
+    }
+
+document.querySelector("[data-id = '"+item.id+"']").innerHTML = item.quantidade;
+Atualizando as quantidades no respectivo id
+
+Para sobrescrever o conteudo no localStorage - basta pegar o itens na posicao existe id e
+igualar ao itemAtual
+itens[existe.id] = itemAtual;
 */
 
 
